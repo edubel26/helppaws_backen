@@ -1,7 +1,7 @@
-const mongoose = require("mongoose") // Importar la libreria
-const bcrypt = require("bcrypt")//Importa el incriptador
+const mongoose = require("mongoose") // Importar la librería
+const bcrypt = require("bcrypt")//Importa el encriptar
 
-const saltRounds = 10; //Comunicar cuantas veses se va a incriptar la contraseña 
+const saltRounds = 10; //Comunicar cuantas veces se va a encriptar la contraseña 
 
 
 

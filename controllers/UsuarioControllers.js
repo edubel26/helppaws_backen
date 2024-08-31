@@ -1,6 +1,6 @@
 const UsuarioSchema = require("../models/Usuario") // Accedemos a los datos del modelo
-const bcrypt = require('bcrypt') //Importamos la libreria de encriptar 
-const jwt = require("jsonwebtoken"); // Importamos la libreria de token  
+const bcrypt = require('bcrypt') //Importamos la librería de encriptar 
+const jwt = require("jsonwebtoken"); // Importamos la librería de token  
 
 // Permite agrupar atributos y funciones
 class UsuariosController {
@@ -80,10 +80,10 @@ class UsuariosController {
             // Comparar la contraseña ingresada con la registrada por el usuario
                                                     //   Ingreso      Almacenado [Encriptado]
             var verificacionClave = await bcrypt.compare(password, usuario.password)
-            // Si la verificacion de la clave es exitosa
+            // Si la verificación de la clave es exitosa
             if(verificacionClave){
 
-                // Creo un token con la informacion codificada del usuario
+                // Creo un token con la información codificada del usuario
                 usuario.password = null
                 const token = jwt.sign({usuario}, 'secret', { expiresIn: '1h'})
 
@@ -93,7 +93,7 @@ class UsuariosController {
                             "token": token
                     })
             }else{
-                res.status(401).send({"status": "error", "message": "Datos invalidos"})
+                res.status(401).send({"status": "error", "message": "Datos inválidos"})
             }
         }else{
             // Cuando el correo ingresado no esta registrado

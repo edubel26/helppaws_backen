@@ -1,9 +1,9 @@
-const express = require('express') // Importendo la libreria
-const app = express() // Inicializamos la variable de la libreria
-const UsuariosController = require('../controllers/UsuarioControllers') //Importando  el controlador
+const express = require('express') // Importa la librería
+const app = express() // Inicializamos la variable de la librería
+const UsuariosController = require('../controllers/UsuarioControllers') //Importa el controlador
 const controller = new UsuariosController();
 
-// creamos nuestros secicios web
+// creamos nuestros servicios web
 app.get('/usuarios', controller.getUsuarios)
 app.post('/usuarios', controller.createUsuarios)
 app.get('/usuarios/:id', controller.getUsuariosById)
