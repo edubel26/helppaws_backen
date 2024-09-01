@@ -1,9 +1,4 @@
 const mongoose = require("mongoose") // Importar la librería
-const bcrypt = require("bcrypt")//Importa el encriptar
-
-const saltRounds = 10; //Comunicar cuantas veces se va a encriptar la contraseña 
-
-
 
 const UsuarioSchema = new mongoose.Schema({
         
@@ -11,10 +6,20 @@ const UsuarioSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    apellidos: {
+        type: String,
+        required: true,
+    },
     email: {
-        type: String, 
-        unique: true,  
-        required: true
+        type: String,
+        required: true,
+        unique: true,
+        validate: {
+          validator: function(correo){
+              return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo);
+          },
+          message: props => props.value + " no es un correo electrónico válido!"
+        }
     }, 
     password: {
         type: String,

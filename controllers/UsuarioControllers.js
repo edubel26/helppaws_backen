@@ -1,55 +1,56 @@
 const UsuarioSchema = require("../models/Usuario") // Accedemos a los datos del modelo
-const bcrypt = require('bcrypt') //Importamos la librería de encriptar 
-const jwt = require("jsonwebtoken"); // Importamos la librería de token  
+const bcrypt = require('bcrypt') // Importamos la librería de encriptaron
+const jwt = require('jsonwebtoken')
 
 // Permite agrupar atributos y funciones
-class UsuariosController {
+class UsuarioController {
 
     async getUsuarios(req, res) {
-      var usuarios = await UsuarioSchema.find();
-      res.json(usuarios)
+        var usuarios = await UsuarioSchema.find();
+        res.json(usuarios)
     }
 
-    async createUsuarios(req, res){
+    async createUsuario(req, res){
 
-      // Encriptando la contraseña
-      const hashedPassword = await bcrypt.hash(req.body.password, 10)
+        // Encriptando la contraseña
+        const hashedPassword = await bcrypt.hash(req.body.password, 10)
+       
+        var nuevoUsuario = {
+           
+            nombres: req.body.nombres,
+            apellidos: req.body.apellidos,
+            email: req.body.email,
+            password: hashedPassword, // Guardo la contraseña hasheada
+        }
 
-      var nuevoUsuarios = {
-          nombres: req.body.nombres,
-          email: req.body.email,
-          password: hashedPassword,
-      }
-
-      await UsuarioSchema(nuevoUsuarios).save()
-      // forma de hacerlo con "Promesas" para evitar errores en guardar usuario
-      .then((result) => { 
-        res.send({"status": "success", "message": "Usuario Guardado correctamente"}) // Usuario registrado
-      }).catch((error) => {
-        res.send({"status": "error", "message": error.message })// Muestra el errror al crear usuario
-      })
+        await UsuarioSchema(nuevoUsuario).save()
+        .then((result) => { // Cuando se ejecuta correctamente
+            res.send({"status": "success", "message": "Usuario Guardado correctamente"})
+        }).catch((error) => { // Cuando hay un error
+            res.send({"status": "error", "message": error.message})
+        })
 
     }
 
-    // Encontrar un solo usuario
-    async getUsuariosById(req, res){
-      var id = req.params.id
-      var usuarios = await UsuarioSchema.findById(id)
-      res.json(usuarios)
+    async getUsuarioById(req, res){
+        var id = req.params.id
+        var usuario = await UsuarioSchema.findById(id)
+        res.json(usuario)
     }
 
-    async updateUsuarios(req, res){
+    async updateUsuario(req, res){
 
         var id = req.params.id;
         const hashedPassword = await bcrypt.hash(req.body.password, 10)
 
-        var updateUsuarios = {
-          nombre: req.body.nombres,
-          email: req.body.email,
-          password: hashedPassword,
+        var updateUser = {
+            nombres: req.body.nombres,
+            apellidos: req.body.apellidos,
+            email: req.body.correo,
+            password: hashedPassword,
         }
 
-        await UsuarioSchema.findByIdAndUpdate(id, updateUsuarios, { new: true })
+        await UsuarioSchema.findByIdAndUpdate(id, updateUser, { new: true })
         .then((result) => { // Cuando se ejecuta correctamente
             res.send({"status": "success", "message": "Usuario Actualizado correctamente"})
         }).catch((error) => { // Cuando hay un error
@@ -58,15 +59,12 @@ class UsuariosController {
 
     }
 
+    async deleteUsuario(req, res){
+        var id = req.params.id
 
-    async deleteUsuarios(req, res){
+        await UsuarioSchema.deleteOne({_id: id})
 
-      var id = req.params.id
-
-      await UsuarioSchema.deleteOne({_id: id})
-
-      res.json({"status": "success", "message": "Usuario Eliminado correctamente"})
-
+        res.json({"status": "success", "message": "Usuario Eliminador correctamente"})
     }
 
     async login(req, res){
@@ -74,13 +72,13 @@ class UsuariosController {
         var email = req.body.email;
         var password = req.body.password
 
-        // Buscar el usuario por el correo
+        // Buscar el usuario por el email
         var usuario = await UsuarioSchema.findOne({email})
         if(usuario){
             // Comparar la contraseña ingresada con la registrada por el usuario
                                                     //   Ingreso      Almacenado [Encriptado]
             var verificacionClave = await bcrypt.compare(password, usuario.password)
-            // Si la verificación de la clave es exitosa
+            // Si la verificacion de la clave es exitosa
             if(verificacionClave){
 
                 // Creo un token con la información codificada del usuario
@@ -88,7 +86,7 @@ class UsuariosController {
                 const token = jwt.sign({usuario}, 'secret', { expiresIn: '1h'})
 
                 res.send({"status": "success", 
-                            "message": "Bienvenido " + usuario.nombres,
+                            "message": "Bienvenido " + usuario.nombre + " " + usuario.apellidos,
                             "user_id": usuario._id,
                             "token": token
                     })
@@ -96,10 +94,10 @@ class UsuariosController {
                 res.status(401).send({"status": "error", "message": "Datos inválidos"})
             }
         }else{
-            // Cuando el correo ingresado no esta registrado
-            res.status(401).send({"status": "error", "message": "El correo ingresado no existe"})
+            // Cuando el email ingresado no esta registrado
+            res.status(401).send({"status": "error", "message": "El email ingresado no existe"})
         }
     }
 }
 
-module.exports =  UsuariosController
+module.exports = UsuarioController
