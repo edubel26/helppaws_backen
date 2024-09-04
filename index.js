@@ -1,26 +1,38 @@
-// configuración de express 
-const express = require('express') //Importando la librería
-const app = express() // Iniciando la variable de la librería
+// Conjuración de express
+const express = require('express'); // Importando la librería
+const app = express(); // Inicializamos la variable de la librería
 const port = 3000 // Definimos el puerto a usar
 
-const mongoose = require('mongoose'); // Importo la librería de mongoose
+const mongoose = require('mongoose'); // Importo la librería mongoose
 
-//Obtengo la cadena de conexión del archivo .anv
-require('dotenv').config()
+// Obtengo la cadena de conexión del archivo .env
+require('dotenv').config();
 const DB_CONNECTION = process.env.DB_CONNECTION || ''
-mongoose.connect(DB_CONNECTION)// creo la cadena de conexión
+mongoose.connect(DB_CONNECTION); // Creo la cadena de conexión
 
-const cors = require('cors') // Importo la librería de cors 
-app.use(cors());// permite la entrada y salida de datos 
+// Agregamos la configuración del cors
+const cors = require('cors');
+app.use(cors());
 
 // Importamos las rutas del otro archivo
-app.use(express.urlencoded({extended: true}))// Acceder a la información de las urls
-app.use(express.json())// Analizar información en formato json
-const UsuarioRoutes = require('./routes/UsuarioRoutes')
-app.use('/', UsuarioRoutes)
+app.use(express.urlencoded({extended: true})); // Acceder a la información de las urls
+app.use(express.json()); // Analizar información en formato JSON
+
+const UsuarioRoutes = require('./routes/UsuarioRoutes');
+app.use('/', UsuarioRoutes);
+
+// Creando el servicio web
+// Funcionalidad de nuestra API
+// [get, post, put, patch, delete]
+// res -> Response -> Respuesta
+// req -> Request  -> Información de entrada
+app.get('/prueba/api/funcional', (req, res) => {
+    // Muestra en pantalla Hello world
+    res.send("Hello world");
+});
 
 
-//Ejecuta el servidor
-app.listen(port, () =>{
-    console.log("Listen on " + port)
-})
+// Ejecutamos el servidor
+app.listen(port, () => {
+    console.log("Listen on " + port);
+});

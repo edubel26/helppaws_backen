@@ -1,13 +1,13 @@
-const UsuarioSchema = require("../models/Usuario") // Accedemos a los datos del modelo
-const bcrypt = require('bcrypt') // Importamos la librería de encriptaron
-const jwt = require('jsonwebtoken')
+const UserSchema = require("../models/Usuario"); // Accedemos a los datos del modelo
+const bcrypt = require('bcrypt'); // Importamos la librería de encriptacion
+const jwt = require('jsonwebtoken');
 
 // Permite agrupar atributos y funciones
 class UsuarioController {
 
     async getUsuarios(req, res) {
-        var usuarios = await UsuarioSchema.find();
-        res.json(usuarios)
+        var usuarios = await UserSchema.find();
+        res.json(usuarios);
     }
 
     async createUsuario(req, res){
@@ -16,14 +16,13 @@ class UsuarioController {
         const hashedPassword = await bcrypt.hash(req.body.password, 10)
        
         var nuevoUsuario = {
-           
             nombres: req.body.nombres,
             apellidos: req.body.apellidos,
             email: req.body.email,
             password: hashedPassword, // Guardo la contraseña hasheada
         }
 
-        await UsuarioSchema(nuevoUsuario).save()
+        await UserSchema(nuevoUsuario).save()
         .then((result) => { // Cuando se ejecuta correctamente
             res.send({"status": "success", "message": "Usuario Guardado correctamente"})
         }).catch((error) => { // Cuando hay un error
@@ -34,7 +33,7 @@ class UsuarioController {
 
     async getUsuarioById(req, res){
         var id = req.params.id
-        var usuario = await UsuarioSchema.findById(id)
+        var usuario = await UserSchema.findById(id)
         res.json(usuario)
     }
 
@@ -46,11 +45,11 @@ class UsuarioController {
         var updateUser = {
             nombres: req.body.nombres,
             apellidos: req.body.apellidos,
-            email: req.body.correo,
+            email: req.body.email,
             password: hashedPassword,
         }
 
-        await UsuarioSchema.findByIdAndUpdate(id, updateUser, { new: true })
+        await UserSchema.findByIdAndUpdate(id, updateUser, { new: true })
         .then((result) => { // Cuando se ejecuta correctamente
             res.send({"status": "success", "message": "Usuario Actualizado correctamente"})
         }).catch((error) => { // Cuando hay un error
@@ -62,18 +61,18 @@ class UsuarioController {
     async deleteUsuario(req, res){
         var id = req.params.id
 
-        await UsuarioSchema.deleteOne({_id: id})
+        await UserSchema.deleteOne({_id: id})
 
         res.json({"status": "success", "message": "Usuario Eliminador correctamente"})
     }
 
     async login(req, res){
-        // Capturo el correo y a contraseña ingresados
+        // Capturo el email y a contraseña ingresados
         var email = req.body.email;
         var password = req.body.password
 
         // Buscar el usuario por el email
-        var usuario = await UsuarioSchema.findOne({email})
+        var usuario = await UserSchema.findOne({email})
         if(usuario){
             // Comparar la contraseña ingresada con la registrada por el usuario
                                                     //   Ingreso      Almacenado [Encriptado]
@@ -86,7 +85,7 @@ class UsuarioController {
                 const token = jwt.sign({usuario}, 'secret', { expiresIn: '1h'})
 
                 res.send({"status": "success", 
-                            "message": "Bienvenido " + usuario.nombre + " " + usuario.apellidos,
+                            "message": "Bienvenido " + usuario.nombres + " " + usuario.apellidos,
                             "user_id": usuario._id,
                             "token": token
                     })
