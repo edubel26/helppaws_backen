@@ -18,17 +18,22 @@ app.use(cors());
 app.use(express.urlencoded({extended: true})); // Acceder a la información de las urls
 app.use(express.json()); // Analizar información en formato JSON
 
+//apartado de creación inicio de sesión etc, del usuario 
 const UsuarioRoutes = require('./routes/UsuarioRoutes');
 app.use('/', UsuarioRoutes);
+
+// apartado de links
+const LinkRoutes = require('./routes/LinkRoutes');
+app.use('/', LinkRoutes);
 
 // Creando el servicio web
 // Funcionalidad de nuestra API
 // [get, post, put, patch, delete]
 // res -> Response -> Respuesta
 // req -> Request  -> Información de entrada
-app.get('/prueba/api/funcional', (req, res) => {
+app.get('/', (req, res) => {
     // Muestra en pantalla Hello world
-    res.send("Hello world");
+    res.send("Help Paws para todos");
 });
 
 
