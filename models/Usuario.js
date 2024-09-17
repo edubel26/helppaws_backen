@@ -24,7 +24,16 @@ const UserSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true
-  } 
+  },
+  code: {
+    type: String,
+    require: true
+  },
+  status: {
+    type: String,
+    require: true,
+    default:'UNVERIFIED'
+  }
 });
 
 module.exports = mongoose.model('usuarios', UserSchema);

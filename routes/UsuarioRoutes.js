@@ -10,5 +10,7 @@ app.get('/usuario/:id', controller.getUsuarioById) // Consulto un usuario
 app.put('/usuario/:id', controller.updateUsuario) // Actualizo un usuario
 app.delete('/usuario/:id', controller.deleteUsuario) // Elimino un usuario
 app.post('/login', controller.login) // Login
+app.post('/confirmaEmail', controller.confirmaEmail) // correo de confirmación
+
 
 module.exports = app

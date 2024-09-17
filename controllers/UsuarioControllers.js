@@ -1,6 +1,9 @@
 const UserSchema = require("../models/Usuario"); // Accedemos a los datos del modelo
-const bcrypt = require('bcrypt'); // Importamos la librería de encriptacion
+const bcrypt = require('bcrypt'); // Importamos la librería de encriptaron
 const jwt = require('jsonwebtoken');
+const { v4: uuidv4 } = require('uuid');
+const { getToken, getTokenData } = require('../config/jwtConfig');
+const { getTemplate, sendEmail } = require('../config/mailConfig');
 
 // Permite agrupar atributos y funciones
 class UsuarioController {
@@ -13,14 +16,30 @@ class UsuarioController {
     async createUsuario(req, res){
 
         // Encriptando la contraseña
-        const hashedPassword = await bcrypt.hash(req.body.password, 10)
-       
+        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+        // se crea unn código aleatorio 
+        const code = uuidv4(); 
+
+
         var nuevoUsuario = {
             nombres: req.body.nombres,
             apellidos: req.body.apellidos,
             email: req.body.email,
-            password: hashedPassword, // Guardo la contraseña hasheada
+            password: hashedPassword,// Guardo la contraseña hasheada
+            code: code, 
         }
+
+        const {nombres, apellidos, email} = req.body;
+
+        // Generar token
+        const token = getToken({email, code});
+
+        // Obtener un template
+        const template = getTemplate(nombres, apellidos, token);
+ 
+        // Enviar el email
+        await sendEmail(email, 'Verificacion de correo HelpPaws', template);
 
         await UserSchema(nuevoUsuario).save()
         .then((result) => { // Cuando se ejecuta correctamente
@@ -28,6 +47,7 @@ class UsuarioController {
         }).catch((error) => { // Cuando hay un error
             res.send({"status": "error", "message": error.message})
         })
+
 
     }
 
@@ -40,6 +60,7 @@ class UsuarioController {
     async updateUsuario(req, res){
 
         var id = req.params.id;
+        
         const hashedPassword = await bcrypt.hash(req.body.password, 10)
 
         var updateUser = {
@@ -96,6 +117,60 @@ class UsuarioController {
             // Cuando el email ingresado no esta registrado
             res.status(401).send({"status": "error", "message": "El email ingresado no existe"})
         }
+    }
+
+
+    async confirmaEmail(req, res){
+        
+        try {
+
+            // Obtener el token
+            const { token } = req.params;
+            
+            // Verificar la data
+            const data = await getTokenData(token);
+     
+            if(data === null) {
+                 return res.json({
+                     success: false,
+                     msg: 'Error al obtener data'
+                 });
+            }
+     
+            console.log(data);
+     
+            const { email, code } = data.data;
+     
+            // Verificar existencia del usuario
+            const user = await User.findOne({ email }) || null;
+     
+            if(user === null) {
+                 return res.json({
+                     success: false,
+                     msg: 'Usuario no existe'
+                 });
+            }
+     
+            // Verificar el código
+            if(code !== user.code) {
+                 return res.redirect('/error.html');
+            }
+     
+            // Actualizar usuario
+            user.status = 'VERIFIED';
+            await user.save();
+     
+            // Redireccionar a la confirmación
+            return res.redirect('/confirm.html');
+             
+         } catch (error) {
+             console.log(error);
+             return res.json({
+                 success: false,
+                 msg: 'Error al confirmar usuario'
+             });
+         }
+
     }
 }
 
