@@ -33,7 +33,7 @@ app.use('/', LinkRoutes);
 // req -> Request  -> Información de entrada
 app.get('/', (req, res) => {
     // Muestra en pantalla Hello world
-    res.send("Help Paws para todos");
+    res.send("Help Paws");
 });
 
 
