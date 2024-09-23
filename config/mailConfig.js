@@ -19,13 +19,7 @@ const transporter = nodemailer.createTransport({
     try {
         
         await transporter.sendMail({
-            from: `
-            <img
-              class="logo__inicioSesion"
-              src="assets\img\logo.png"
-              alt="Logo Help paws"
-            /> 
-            <${ mail.user }>
+            from: `HelpPaws <${ mail.user }>
             `, // sender address
             to: email, // list of receivers
             subject, // Subject line
