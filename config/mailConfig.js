@@ -19,7 +19,14 @@ const transporter = nodemailer.createTransport({
     try {
         
         await transporter.sendMail({
-            from: `MHCode <${ mail.user }>`, // sender address
+            from: `
+            <img
+              class="logo__inicioSesion"
+              src="assets\img\logo.png"
+              alt="Logo Help paws"
+            /> 
+            <${ mail.user }>
+            `, // sender address
             to: email, // list of receivers
             subject, // Subject line
             text: "Somos HelpPaws", // plain text body
@@ -38,7 +45,11 @@ const transporter = nodemailer.createTransport({
         </head>
         
         <div id="email___content">
-            
+            <img
+              class="logo__inicioSesion"
+              src="assets\img\logo.png"
+              alt="Logo Help paws"
+            />
             <h2>${ nombres + apellidos}</h2>
             <p>Para confirmar tu cuenta, ingresa al siguiente enlace</p>
             <a
