@@ -39,11 +39,7 @@ const transporter = nodemailer.createTransport({
         </head>
         
         <div id="email___content">
-              <img
-                class="logo__inicioSesion"
-                src="../assets/img/logo.png"
-                alt="Logo Help paws"
-              />
+              <img class="logo__inicioSesion" src="https://i.imgur.com/a/3Rufq4o.png" alt="Logo Help paws"/>
             <h2>${ nombres + apellidos}</h2>
             <p>Para confirmar tu cuenta, ingresa al siguiente enlace</p>
             <a
