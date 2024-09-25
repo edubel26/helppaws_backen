@@ -5,7 +5,7 @@
           "use": "@vercel/node"
       },
       {
-        "src": "./logo",
+        "src": "logo",
         "use": "@vercel/node"
       }
   ],
